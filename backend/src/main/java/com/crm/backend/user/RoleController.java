@@ -8,23 +8,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.crm.backend.user.service.RoleService;
+
 @RestController
 @RequestMapping("/api/roles")
 public class RoleController {
 
-    private final RoleRepository roleRepository;
+	private final RoleService roleService;
 
-    public RoleController(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
+	public RoleController(RoleService roleService) {
+		this.roleService = roleService;
+	}
 
-    @PostMapping
-    public Role createRole(@RequestBody Role role) {
-        return roleRepository.save(role);
-    }
+	@PostMapping
+	public Role createRole(@RequestBody Role role) {
+		return roleService.create(role);
+	}
 
-    @GetMapping
-    public List<Role> getAllRoles() {
-        return roleRepository.findAll();
-    }
+	@GetMapping
+	public List<Role> getAllRoles() {
+		return roleService.getAll();
+	}
 }
