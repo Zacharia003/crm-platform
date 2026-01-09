@@ -36,6 +36,12 @@ public class User {
 	@Column(nullable = false)
 	private String password;
 
+	@Column(nullable = false)
+	private String countryCode; // e.g. +91, +1
+
+	@Column(nullable = false, unique = true)
+	private String mobileNumber;
+
 	@ManyToOne
 	@JoinColumn(name = "company_id", nullable = false)
 	private Company company;
