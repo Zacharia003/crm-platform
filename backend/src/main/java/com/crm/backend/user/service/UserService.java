@@ -6,7 +6,11 @@ import com.crm.backend.user.User;
 
 public interface UserService {
 
-    User create(User user);
+	User create(User user);
 
-    List<User> getAll();
+	User update(Long id, User user);
+
+	void deactivate(Long id);
+
+	List<User> getAll();
 }

@@ -41,7 +41,38 @@ public class UserServiceImpl implements UserService {
 
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 
+		if (user.getActive() == null) {
+			user.setActive(true);
+		}
+
 		return userRepository.save(user);
+	}
+
+	@Override
+	public User update(Long id, User updatedUser) {
+
+		User existingUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+
+		existingUser.setName(updatedUser.getName());
+		existingUser.setEmail(updatedUser.getEmail());
+		existingUser.setCountryCode(updatedUser.getCountryCode());
+		existingUser.setMobileNumber(updatedUser.getMobileNumber());
+		existingUser.setActive(updatedUser.getActive());
+
+		if (updatedUser.getRole() != null) {
+			Role role = roleRepository.findById(updatedUser.getRole().getId())
+					.orElseThrow(() -> new RuntimeException("Role not found"));
+			existingUser.setRole(role);
+		}
+
+		return userRepository.save(existingUser);
+	}
+
+	@Override
+	public void deactivate(Long id) {
+		User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+		user.setActive(false);
+		userRepository.save(user);
 	}
 
 	@Override

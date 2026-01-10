@@ -32,12 +32,15 @@ public class AuthController {
 		User user;
 
 		if (identifier.contains("@")) {
-			// Login via email
+			// Email login
 			user = userRepository.findByEmail(identifier)
 					.orElseThrow(() -> new RuntimeException("Invalid credentials"));
 		} else {
-			// Login via mobile
-			// Example: +919876543210
+			// Mobile login: +919876543210
+			if (!identifier.startsWith("+") || identifier.length() < 8) {
+				throw new RuntimeException("Invalid credentials");
+			}
+
 			String countryCode = identifier.substring(0, 3); // +91
 			String mobile = identifier.substring(3);
 
@@ -49,7 +52,7 @@ public class AuthController {
 			throw new RuntimeException("Invalid credentials");
 		}
 
-		return jwtUtil.generateToken(user.getEmail());
+		return jwtUtil.generateToken(user.getEmail()); // subject = email (stable)
 	}
 
 }

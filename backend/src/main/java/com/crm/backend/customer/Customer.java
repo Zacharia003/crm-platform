@@ -1,4 +1,4 @@
-package com.crm.backend.user;
+package com.crm.backend.customer;
 
 import com.crm.backend.company.Company;
 
@@ -16,12 +16,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "users")
+@Table(name = "customers")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Customer {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,26 +30,18 @@ public class User {
 	@Column(nullable = false)
 	private String name;
 
-	@Column(nullable = false, unique = true)
+	@Column(unique = true)
 	private String email;
 
-	@Column(nullable = false)
-	private String password;
+	private String phone;
 
-	@Column(nullable = false)
-	private String countryCode; // e.g. +91, +1
-
-	@Column(nullable = false, unique = true)
-	private String mobileNumber;
+	private String address;
 
 	@ManyToOne
 	@JoinColumn(name = "company_id", nullable = false)
 	private Company company;
 
-	@ManyToOne
-	@JoinColumn(name = "role_id", nullable = false)
-	private Role role;
-
 	@Column(nullable = false)
 	private Boolean active = true;
+
 }
