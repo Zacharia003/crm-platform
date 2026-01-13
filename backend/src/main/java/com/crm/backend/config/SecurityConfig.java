@@ -22,12 +22,13 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		http.csrf(csrf -> csrf.disable()).cors(cors -> {
-		}) // enable CORS if frontend calls this API
-				.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+		}).sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
-						.requestMatchers("/api/users/**").hasRole("ADMIN").anyRequest().authenticated())
+						.requestMatchers("/api/users/change-password").authenticated().requestMatchers("/api/users/**")
+						.hasRole("ADMIN").anyRequest().authenticated())
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
+
 }

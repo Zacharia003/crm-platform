@@ -8,6 +8,7 @@ import com.crm.backend.company.Company;
 import com.crm.backend.company.CompanyRepository;
 import com.crm.backend.customer.Customer;
 import com.crm.backend.customer.CustomerRepository;
+import com.crm.backend.exception.ResourceNotFoundException;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -23,7 +24,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Customer create(Customer customer) {
 		Company company = companyRepository.findById(customer.getCompany().getId())
-				.orElseThrow(() -> new RuntimeException("Company not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Company not found"));
 
 		customer.setCompany(company);
 
@@ -39,7 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public Customer update(Long id, Customer updatedCustomer) {
 
 		Customer existing = customerRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Customer not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
 		existing.setName(updatedCustomer.getName());
 		existing.setEmail(updatedCustomer.getEmail());
@@ -53,13 +54,13 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public void deactivate(Long id) {
 		Customer customer = customerRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Customer not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 		customer.setActive(false);
 		customerRepository.save(customer);
 	}
 
 	@Override
 	public List<Customer> getAll() {
-		return customerRepository.findAll();
+		return customerRepository.findByActiveTrue();
 	}
 }

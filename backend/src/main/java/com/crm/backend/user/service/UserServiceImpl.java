@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.crm.backend.company.Company;
 import com.crm.backend.company.CompanyRepository;
+import com.crm.backend.exception.ResourceNotFoundException;
+import com.crm.backend.exception.UnauthorizedException;
 import com.crm.backend.user.Role;
 import com.crm.backend.user.RoleRepository;
 import com.crm.backend.user.User;
@@ -31,10 +33,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User create(User user) {
 		Company company = companyRepository.findById(user.getCompany().getId())
-				.orElseThrow(() -> new RuntimeException("Company not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Company not found"));
 
 		Role role = roleRepository.findById(user.getRole().getId())
-				.orElseThrow(() -> new RuntimeException("Role not found"));
+				.orElseThrow(() -> new ResourceNotFoundException("Role not found"));
 
 		user.setCompany(company);
 		user.setRole(role);
@@ -51,7 +53,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User update(Long id, User updatedUser) {
 
-		User existingUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+		User existingUser = userRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
 		existingUser.setName(updatedUser.getName());
 		existingUser.setEmail(updatedUser.getEmail());
@@ -70,8 +73,22 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void deactivate(Long id) {
-		User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+		User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 		user.setActive(false);
+		userRepository.save(user);
+	}
+
+	@Override
+	public void changePassword(String email, String oldPassword, String newPassword) {
+
+		User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+		if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+			throw new UnauthorizedException("Old password is incorrect");
+		}
+
+		user.setPassword(passwordEncoder.encode(newPassword));
 		userRepository.save(user);
 	}
 

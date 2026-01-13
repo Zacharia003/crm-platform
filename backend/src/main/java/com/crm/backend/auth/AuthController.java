@@ -1,11 +1,14 @@
 package com.crm.backend.auth;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.crm.backend.exception.UnauthorizedException;
 import com.crm.backend.security.JwtUtil;
 import com.crm.backend.user.User;
 import com.crm.backend.user.UserRepository;
@@ -34,22 +37,22 @@ public class AuthController {
 		if (identifier.contains("@")) {
 			// Email login
 			user = userRepository.findByEmail(identifier)
-					.orElseThrow(() -> new RuntimeException("Invalid credentials"));
+					.orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 		} else {
 			// Mobile login: +919876543210
 			if (!identifier.startsWith("+") || identifier.length() < 8) {
-				throw new RuntimeException("Invalid credentials");
+				throw new UnauthorizedException("Invalid credentials");
 			}
 
 			String countryCode = identifier.substring(0, 3); // +91
 			String mobile = identifier.substring(3);
 
 			user = userRepository.findByCountryCodeAndMobileNumber(countryCode, mobile)
-					.orElseThrow(() -> new RuntimeException("Invalid credentials"));
+					.orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 		}
 
 		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-			throw new RuntimeException("Invalid credentials");
+			throw new UnauthorizedException("Invalid credentials");
 		}
 
 		return jwtUtil.generateToken(user.getEmail()); // subject = email (stable)

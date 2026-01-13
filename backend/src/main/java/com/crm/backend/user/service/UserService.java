@@ -13,4 +13,7 @@ public interface UserService {
 	void deactivate(Long id);
 
 	List<User> getAll();
+
+	void changePassword(String email, String oldPassword, String newPassword);
+
 }
