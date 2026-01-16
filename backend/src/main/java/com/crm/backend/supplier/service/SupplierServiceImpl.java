@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.crm.backend.company.Company;
-import com.crm.backend.company.CompanyRepository;
 import com.crm.backend.exception.ResourceNotFoundException;
+import com.crm.backend.security.CurrentUserContext;
 import com.crm.backend.supplier.Supplier;
 import com.crm.backend.supplier.SupplierRepository;
 
@@ -14,20 +14,17 @@ import com.crm.backend.supplier.SupplierRepository;
 public class SupplierServiceImpl implements SupplierService {
 
 	private final SupplierRepository supplierRepository;
-	private final CompanyRepository companyRepository;
+	private final CurrentUserContext currentUserContext;
 
-	public SupplierServiceImpl(SupplierRepository supplierRepository, CompanyRepository companyRepository) {
+	public SupplierServiceImpl(SupplierRepository supplierRepository, CurrentUserContext currentUserContext) {
 		this.supplierRepository = supplierRepository;
-		this.companyRepository = companyRepository;
+		this.currentUserContext = currentUserContext;
 	}
 
-	//supplier create service
 	@Override
 	public Supplier create(Supplier supplier) {
 
-		Company company = companyRepository.findById(supplier.getCompany().getId())
-				.orElseThrow(() -> new ResourceNotFoundException("Company not found"));
-
+		Company company = currentUserContext.getUser().getCompany();
 		supplier.setCompany(company);
 
 		if (supplier.getActive() == null) {
@@ -37,11 +34,12 @@ public class SupplierServiceImpl implements SupplierService {
 		return supplierRepository.save(supplier);
 	}
 
-	//supplier update service
 	@Override
 	public Supplier update(Long id, Supplier updatedSupplier) {
 
-		Supplier existing = supplierRepository.findById(id)
+		Long companyId = currentUserContext.getCompanyId();
+
+		Supplier existing = supplierRepository.findByIdAndCompanyId(id, companyId)
 				.orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
 
 		existing.setName(updatedSupplier.getName());
@@ -52,20 +50,22 @@ public class SupplierServiceImpl implements SupplierService {
 		return supplierRepository.save(existing);
 	}
 
-	//supplier deactivate service
 	@Override
 	public void deactivate(Long id) {
 
-		Supplier supplier = supplierRepository.findById(id)
+		Long companyId = currentUserContext.getCompanyId();
+
+		Supplier supplier = supplierRepository.findByIdAndCompanyId(id, companyId)
 				.orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
 
 		supplier.setActive(false);
 		supplierRepository.save(supplier);
 	}
 
-	//supplier fetch data service
 	@Override
 	public List<Supplier> getAllActive() {
-		return supplierRepository.findByActiveTrue();
+
+		Long companyId = currentUserContext.getCompanyId();
+		return supplierRepository.findByCompanyIdAndActiveTrue(companyId);
 	}
 }

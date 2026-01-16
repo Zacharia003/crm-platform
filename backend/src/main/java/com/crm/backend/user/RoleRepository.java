@@ -1,6 +1,12 @@
 package com.crm.backend.user;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
+	Optional<Role> findByNameAndCompanyId(String name, Long companyId);
+
+	List<Role> findByCompanyId(Long companyId);
 }

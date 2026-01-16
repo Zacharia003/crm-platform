@@ -1,30 +1,29 @@
 package com.crm.backend.company;
 
-import java.util.List;
-
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.crm.backend.company.service.CompanyService;
+
 @RestController
 @RequestMapping("/api/companies")
 public class CompanyController {
 
-    private final CompanyRepository companyRepository;
+	private final CompanyService companyservice;
 
-    public CompanyController(CompanyRepository companyRepository) {
-        this.companyRepository = companyRepository;
-    }
+	public CompanyController(CompanyService companyservice) {
+		this.companyservice = companyservice;
+	}
 
-    @PostMapping
-    public Company createCompany(@RequestBody Company company) {
-        return companyRepository.save(company);
-    }
+	@PostMapping
+	public Company createCompany(@RequestBody Company company) {
+		return companyservice.create(company);
+	}
 
-    @GetMapping
-    public List<Company> getAllCompanies() {
-        return companyRepository.findAll();
-    }
+//	@GetMapping
+//	public List<Company> getAllCompanies() {
+//		return CompanyService.findAll();
+//	}
 }

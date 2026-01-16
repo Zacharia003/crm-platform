@@ -1,4 +1,4 @@
-package com.crm.backend.user;
+package com.crm.backend.product;
 
 import com.crm.backend.company.Company;
 
@@ -17,21 +17,39 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "roles", uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "company_id" }) })
+@Table(name = "products", uniqueConstraints = { @UniqueConstraint(columnNames = { "sku", "company_id" }) })
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Role {
+public class Product {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(nullable = false)
-	private String name; // ADMIN, SALES, STORE, ACCOUNTS
+	private String name;
+
+	@Column(nullable = false)
+	private String sku;
+
+	private String description;
+
+	private Double unitPrice;
+
+	@Column(nullable = false)
+	private String unit;
+
+	private String hsnCode;
+
+	@Column(columnDefinition = "json")
+	private String attributes; // JSON string
 
 	@ManyToOne
 	@JoinColumn(name = "company_id", nullable = false)
 	private Company company;
+
+	@Column(nullable = false)
+	private Boolean active = true;
 }

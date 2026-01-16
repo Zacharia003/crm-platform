@@ -1,4 +1,4 @@
-package com.crm.backend.customer;
+package com.crm.backend.product;
 
 import java.util.List;
 
@@ -11,35 +11,35 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.crm.backend.customer.service.CustomerService;
+import com.crm.backend.product.service.ProductService;
 
 @RestController
-@RequestMapping("/api/customers")
-public class CustomerController {
+@RequestMapping("/api/products")
+public class ProductController {
 
-	private final CustomerService customerService;
+	private final ProductService productService;
 
-	public CustomerController(CustomerService customerService) {
-		this.customerService = customerService;
+	public ProductController(ProductService productService) {
+		this.productService = productService;
 	}
 
 	@PostMapping
-	public Customer create(@RequestBody Customer customer) {
-		return customerService.create(customer);
+	public Product create(@RequestBody Product product) {
+		return productService.create(product);
 	}
 
 	@PutMapping("/{id}")
-	public Customer update(@PathVariable Long id, @RequestBody Customer customer) {
-		return customerService.update(id, customer);
+	public Product update(@PathVariable Long id, @RequestBody Product product) {
+		return productService.update(id, product);
 	}
 
 	@DeleteMapping("/{id}")
 	public void deactivate(@PathVariable Long id) {
-		customerService.deactivate(id);
+		productService.deactivate(id);
 	}
 
 	@GetMapping
-	public List<Customer> getAll() {
-		return customerService.getAllActive();
+	public List<Product> getAll() {
+		return productService.getAllActive();
 	}
 }

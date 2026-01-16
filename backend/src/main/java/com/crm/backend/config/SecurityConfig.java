@@ -2,6 +2,7 @@ package com.crm.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,6 +25,8 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable()).cors(cors -> {
 		}).sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll()
+						.requestMatchers("/api/signup").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/companies").permitAll()
 						.requestMatchers("/api/users/change-password").authenticated().requestMatchers("/api/users/**")
 						.hasRole("ADMIN").anyRequest().authenticated())
 				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

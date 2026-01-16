@@ -8,7 +8,7 @@ public interface CustomerService {
 
 	Customer create(Customer customer);
 
-	List<Customer> getAll();
+	List<Customer> getAllActive();
 
 	Customer update(Long id, Customer customer);
 
